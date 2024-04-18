@@ -5,8 +5,8 @@ sys.path.append(".")
 
 from loopie_audio import *
 
-CHUNK_SIZE = 16
-RATE = 48000
+CHUNK_SIZE = 256
+RATE = 44100
 
 class LoopieUI(QtWidgets.QMainWindow):
     def __init__(self):
@@ -20,11 +20,23 @@ class LoopieUI(QtWidgets.QMainWindow):
         
         self.p = pyaudio.PyAudio()
         
-        self.stream_in = None
-        self.stream_out = None
-        
         self.inputIndex = 0
         self.outputIndex = 0
+        
+        self.stream_in = self.stream_in = self.p.open(format=pyaudio.paInt16,
+                                     channels=1,
+                                     rate=RATE,
+                                     input=True,
+                                     input_device_index=self.inputIndex,
+                                     frames_per_buffer=CHUNK_SIZE)
+        self.stream_out = self.stream_out = self.p.open(format=pyaudio.paInt16,
+                                      channels=1,
+                                      rate=RATE,
+                                      output=True,
+                                      output_device_index=self.outputIndex,
+                                      frames_per_buffer=CHUNK_SIZE)
+        
+        
         
         self.populateInputOutput()
         
@@ -66,25 +78,12 @@ class LoopieUI(QtWidgets.QMainWindow):
             
     def toggleAudio(self, value):
         if (value):
-            self.stream_in = self.p.open(format=pyaudio.paInt16,
-                                        channels=1,
-                                        rate=RATE,
-                                        input=True,
-                                        input_device_index=self.inputIndex,
-                                        frames_per_buffer=CHUNK_SIZE)
-            self.stream_out = self.p.open(format=pyaudio.paInt16,
-                                        channels=1,
-                                        rate=RATE,
-                                        output=True,
-                                        output_device_index=self.outputIndex,
-                                        frames_per_buffer=CHUNK_SIZE)
             # open new thread for real-time audio
-            self.audio_thread = AudioThread(self.stream_in, self.stream_out, CHUNK_SIZE)
+            self.audio_thread = AudioThread(self.p, self.inputIndex, self.outputIndex, CHUNK_SIZE, RATE)
             self.audio_thread.start()
         else:
             self.audio_thread.stop()
-            self.stream_in.stop_stream()
-            self.stream_out.stop_stream()
+            
  
     
     
