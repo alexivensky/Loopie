@@ -15,6 +15,8 @@ class AudioThread(QtCore.QThread):
         self.chunk_size = chunk_size
         self.rate = rate
         self.running = False
+        self.volMult = 10
+        self.distOn = False
 
     def run(self):
         self.running = True
@@ -32,8 +34,10 @@ class AudioThread(QtCore.QThread):
                                     frames_per_buffer=self.chunk_size)
         while self.running:
             data = self.stream_in.read(self.chunk_size, exception_on_overflow=False)
-            data = self.apply_distortion(data)
-            self.stream_out.write(data)
+            input_array = np.frombuffer(data, dtype=np.int16) * self.volMult
+            if self.distOn:
+                input_array = self.apply_distortion(input_array)
+            self.stream_out.write(input_array.astype(np.int16).tobytes())
         self.finished.emit()
 
 
@@ -46,10 +50,9 @@ class AudioThread(QtCore.QThread):
         
     ### EFFECTS
     
-    def apply_distortion(self, input_data):
-        input_array = np.frombuffer(input_data, dtype=np.int16)
-        distorted_array = np.clip(input_array * 4, -2000.0, 2000.0)
-        return distorted_array.astype(np.int16).tobytes()
+    def apply_distortion(self, input_array):
+        distorted_array = np.clip(input_array, -1200.0, 1200.0)
+        return distorted_array
         
     
 if __name__ == "__main__":

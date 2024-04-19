@@ -88,7 +88,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="distBox">
             <property name="text">
              <string>Distortion</string>
             </property>

@@ -17,23 +17,19 @@ class LoopieUI(QtWidgets.QMainWindow):
         self.deviceInputsCB.currentIndexChanged.connect(self.changeInputDevice)
         self.deviceOutputsCB.currentIndexChanged.connect(self.changeOutputDevice)
         self.onCheck.stateChanged.connect(self.toggleAudio)
+        self.distBox.stateChanged.connect(self.toggleDistortion)
         
         self.p = pyaudio.PyAudio()
         
         self.inputIndex = 0
         self.outputIndex = 0
-        self.inputChannels = min(self.p.get_device_info_by_index(self.inputIndex)['maxInputChannels'], 2)
-        self.outputChannels = min(self.p.get_device_info_by_index(self.outputIndex)['maxOutputChannels'], 2)
         
         self.stream_in = None
         self.stream_out = None
         
+        self.audio_thread = None
+        
         self.populateInputOutput()
-        
-        
-        
-        
-        
         
         
         
@@ -42,11 +38,11 @@ class LoopieUI(QtWidgets.QMainWindow):
             device = self.p.get_device_info_by_index(i)
             if device['maxInputChannels']:
                 self.deviceInputsCB.addItem(f"{device['name']}", i)
-                if i == self.inputIndex:  # If this is the selected input device
+                if i == self.inputIndex: 
                     self.inputChannels = device['maxInputChannels']
             if device['maxOutputChannels']:
                 self.deviceOutputsCB.addItem(f"{device['name']}", i)
-                if i == self.outputIndex:  # If this is the selected output device
+                if i == self.outputIndex: 
                     self.outputChannels = device['maxOutputChannels']
                 
     def changeInputDevice(self, index):
@@ -84,8 +80,9 @@ class LoopieUI(QtWidgets.QMainWindow):
         else:
             self.audio_thread.stop()
             
- 
-    
+    def toggleDistortion(self, value):
+        if self.audio_thread is not None:
+            self.audio_thread.distOn = value
     
 
         
