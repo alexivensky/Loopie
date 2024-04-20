@@ -15,8 +15,12 @@ class AudioThread(QtCore.QThread):
         self.chunk_size = chunk_size
         self.rate = rate
         self.running = False
-        self.volMult = 10
+        self.volMult = 5
         self.distOn = False
+        self.clipAmount = 1200.0
+        self.tremOn = False
+        self.tremolo_rate = 3.33 
+        self.tremolo_depth = 0.0009
 
     def run(self):
         self.running = True
@@ -37,6 +41,8 @@ class AudioThread(QtCore.QThread):
             input_array = np.frombuffer(data, dtype=np.int16) * self.volMult
             if self.distOn:
                 input_array = self.apply_distortion(input_array)
+            if self.tremOn:
+                input_array = self.apply_tremolo(input_array)
             self.stream_out.write(input_array.astype(np.int16).tobytes())
         self.finished.emit()
 
@@ -51,14 +57,20 @@ class AudioThread(QtCore.QThread):
     ### EFFECTS
     
     def apply_distortion(self, input_array):
-        distorted_array = np.clip(input_array, -1200.0, 1200.0)
+        distorted_array = np.clip(input_array, -self.clipAmount, self.clipAmount) * 5
         return distorted_array
+    
+    def apply_tremolo(self, input_array):
+        t = np.linspace(time.time(), time.time() + len(input_array) / self.rate, len(input_array))
+        tremolo_signal = np.cos(2 * np.pi * self.tremolo_rate * t)
+        tremolo_signal *= self.tremolo_depth * np.max(input_array)
+        return input_array * tremolo_signal
         
     
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     p = pyaudio.PyAudio()
-    a = AudioThread(p, 1, 3, 16, 44100)
+    a = AudioThread(p, 0, 2, 16, 44100)
     for i in range(p.get_device_count()):
             device = p.get_device_info_by_index(i)
             print(i, device['name'])
