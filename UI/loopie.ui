@@ -40,16 +40,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="onCheck">
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="text">
-           <string>On</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="Line" name="line">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -106,7 +96,16 @@
              </widget>
             </item>
             <item>
-             <widget class="QSlider" name="horizontalSlider">
+             <widget class="QSlider" name="distSlider">
+              <property name="minimum">
+               <number>10</number>
+              </property>
+              <property name="maximum">
+               <number>500</number>
+              </property>
+              <property name="value">
+               <number>100</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -124,7 +123,22 @@
              </widget>
             </item>
             <item>
-             <widget class="QSlider" name="horizontalSlider_2">
+             <widget class="QSlider" name="tremSlider">
+              <property name="minimum">
+               <number>100</number>
+              </property>
+              <property name="maximum">
+               <number>700</number>
+              </property>
+              <property name="pageStep">
+               <number>8</number>
+              </property>
+              <property name="value">
+               <number>333</number>
+              </property>
+              <property name="sliderPosition">
+               <number>333</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -135,16 +149,28 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <widget class="QCheckBox" name="checkBox_3">
+             <widget class="QCheckBox" name="delayBox">
               <property name="text">
                <string>Delay</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSlider" name="horizontalSlider_3">
+             <widget class="QSlider" name="delaySlider">
+              <property name="minimum">
+               <number>5</number>
+              </property>
+              <property name="maximum">
+               <number>100</number>
+              </property>
+              <property name="value">
+               <number>50</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::NoTicks</enum>
               </property>
              </widget>
             </item>
