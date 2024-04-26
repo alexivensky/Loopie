@@ -25,7 +25,7 @@ class AudioThread(QtCore.QThread):
         self.delayOn = False
         self.delayTime = 0.5
         self.oldDelayTime = 0.5 
-        self.delayBuffer = np.zeros(int(self.rate * (self.delayTime)))
+        self.delayBuffer = np.zeros(int(self.rate * self.delayTime))
         self.delayIndex = 0
 
     def run(self):
@@ -45,7 +45,7 @@ class AudioThread(QtCore.QThread):
                                     frames_per_buffer=self.chunk_size)
         while self.running:
             if self.oldDelayTime != self.delayTime:
-                self.delayBuffer = np.zeros(int(self.rate * (self.delayTime)))
+                self.delayBuffer = np.zeros(int(self.rate * self.delayTime))
                 self.delayIndex = 0
                 self.oldDelayTime = self.delayTime
             data = self.stream_in.read(self.chunk_size, exception_on_overflow=False)
@@ -82,8 +82,8 @@ class AudioThread(QtCore.QThread):
     
     def apply_delay(self, input_array):
         output_array = np.empty_like(input_array)
-        for i in range(len(input_array)):
-            delayed_sample = self.delayBuffer[self.delayIndex]
+        for i in range(len(input_array)): 
+            delayed_sample = self.delayBuffer[self.delayIndex] 
             self.delayBuffer[self.delayIndex] = input_array[i] + delayed_sample * 0.5  
             output_array[i] = input_array[i] + delayed_sample  
             self.delayIndex = (self.delayIndex + 1) % len(self.delayBuffer)
