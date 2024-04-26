@@ -6,3 +6,11 @@ Loopie is a lightweight guitar amp/effects simulator built in Python. It was cre
 ## Authors
 
 - [@alexivensky](https://github.com/alexivensky)
+
+
+
+## Files
+
+- UI/LoopieUI.ui: UI file containing XML to represent PyQt UI
+- UI/LoopieUI.py: Python class to represent front end
+- loopie_audio.py: contains AudioThread Python class to represent back end
